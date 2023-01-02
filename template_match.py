@@ -98,3 +98,69 @@ cur_img = image.copy()
 cv2.drawContours(cur_img,cnts,-1,(0,0,255),3)
 cv_show('img',cur_img)
 locs = []
+
+# Walk the outline
+for (i, c) in enumerate(cnts):
+	# Calculate rectangle
+	(x, y, w, h) = cv2.boundingRect(c)
+	ar = w / float(h)
+# Select the appropriate area, depending on the actual task, this is usually a group of four numbers
+	if ar > 2.5 and ar < 4.0:
+
+		if (w > 40 and w < 55) and (h > 10 and h < 20):
+			# Keep the ones that fit the bill
+			locs.append((x, y, w, h))
+# Sort the matching Outlines from left to right
+locs = sorted(locs, key=lambda x:x[0])
+output = []
+# Walk through the numbers in each outline
+for (i, (gX, gY, gW, gH)) in enumerate(locs):
+	# initialize the list of group digits
+	groupOutput = []
+# Extract each group according to the coordinates
+	group = gray[gY - 5:gY + gH + 5, gX - 5:gX + gW + 5]
+	cv_show('group',group)
+# Preprocessing
+	group = cv2.threshold(group, 0, 255,
+		cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+	cv_show('group',group)
+	#Calculate the outline of each group
+	group_,digitCnts,hierarchy = cv2.findContours(group.copy(), cv2.RETR_EXTERNAL,
+		cv2.CHAIN_APPROX_SIMPLE)
+	digitCnts = contours.sort_contours(digitCnts,
+		method="left-to-right")[0]
+
+# Calculate each number in each group
+	for c in digitCnts:
+	#Find the outline of the current value and resize it to the appropriate size
+		(x, y, w, h) = cv2.boundingRect(c)
+		roi = group[y:y + h, x:x + w]
+		roi = cv2.resize(roi, (57, 88))
+		cv_show('roi',roi)
+		#Calculate the match score
+		scores = []
+		# Calculate each score in the template
+		for (digit, digitROI) in digits.items():
+			# Template matching
+			result = cv2.matchTemplate(roi, digitROI,
+									   cv2.TM_CCOEFF)
+			(_, score, _, _) = cv2.minMaxLoc(result)
+			scores.append(score)
+
+		# To get the most appropriate number
+		groupOutput.append(str(np.argmax(scores)))
+	# Draw
+	cv2.rectangle(image, (gX - 5, gY - 5),
+		(gX + gW + 5, gY + gH + 5), (0, 0, 255), 1)
+	cv2.putText(image, "".join(groupOutput), (gX, gY - 15),
+		cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0, 0, 255), 2)
+
+	# get result
+	output.extend(groupOutput)
+
+# print result
+print("Credit Card #: {}".format("".join(output)))
+cv2.imshow("Image", image)
+cv2.waitKey(0)
+
+
