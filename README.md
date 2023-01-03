@@ -4,5 +4,8 @@ This is a simple project that uses `OpenCV` to recognize credit card numbers. We
 After reading the template, find the grayscale of the template and binary image, and then use `findContours` to find the outline of the template.
 ![template_reco](https://raw.githubusercontent.com/MeloShen/Card-number-recognition/main/_output/template-reco.png)
 
+
+
+
 ### License
 [MIT](https://choosealicense.com/licenses/mit/)
