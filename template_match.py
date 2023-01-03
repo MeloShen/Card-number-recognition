@@ -38,7 +38,8 @@ cv_show('ref',ref)
 ref_, refCnts, hierarchy = cv2.findContours(ref.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
 cv2.drawContours(img,refCnts,-1,(0,0,255),3)
 cv_show('img',img)
-refCnts = myutils.sort_contours(refCnts, method="left-to-right")[0] #排序，从左到右，从上到下
+# Sort from left to right, top to bottom
+refCnts = myutils.sort_contours(refCnts, method="left-to-right")[0]
 digits = {}
 
 # Walk through each contour
@@ -142,8 +143,7 @@ for (i, (gX, gY, gW, gH)) in enumerate(locs):
 		# Calculate each score in the template
 		for (digit, digitROI) in digits.items():
 			# Template matching
-			result = cv2.matchTemplate(roi, digitROI,
-									   cv2.TM_CCOEFF)
+			result = cv2.matchTemplate(roi, digitROI,cv2.TM_CCOEFF)
 			(_, score, _, _) = cv2.minMaxLoc(result)
 			scores.append(score)
 
