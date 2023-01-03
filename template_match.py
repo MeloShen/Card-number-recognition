@@ -154,7 +154,6 @@ for (i, (gX, gY, gW, gH)) in enumerate(locs):
 		(gX + gW + 5, gY + gH + 5), (0, 0, 255), 1)
 	cv2.putText(image, "".join(groupOutput), (gX, gY - 15),
 		cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0, 0, 255), 2)
-
 	# get result
 	output.extend(groupOutput)
 
