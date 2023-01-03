@@ -82,8 +82,7 @@ cv_show('gradX',gradX)
 
 #THRESH_OTSU will automatically find a proper threshold, suitable for double peaks.
 # Set the threshold parameter to 0
-thresh = cv2.threshold(gradX, 0, 255,
-	cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+thresh = cv2.threshold(gradX, 0, 255,cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
 cv_show('thresh',thresh)
 
 # One more close operation
